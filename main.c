@@ -27,6 +27,19 @@ static int	find_call(void)
 	if ((ptrace(PTRACE_PEEKTEXT, g_pid, reg.rip, 0) & 0xffff) == 0x050f)
 	    is_syscall = true;
 
+	/* TODO REMOVE */
+	    is_syscall = false;
+
+	if ((ptrace(PTRACE_PEEKTEXT, g_pid, reg.rip, 0) & 0xff) == 0xe8)
+	{
+	    printf("Possible call -->%lx \t", ptrace(PTRACE_PEEKTEXT, g_pid, reg.rip, 0));
+	    printf("ADDR = %lx\n", reg.rip);
+	}    
+	/*if (reg.rip == 0x400522)*/
+	/*{*/
+	/*printf("*********************%lx\n", ptrace(PTRACE_PEEKTEXT, g_pid, reg.rip, 0));*/
+	/*}*/
+
 	if (ptrace(PTRACE_SINGLESTEP, g_pid, (void *)0, (void *)0) < 0)
 	{
 	    fprintf(stderr, "simplestep: %m\n");
