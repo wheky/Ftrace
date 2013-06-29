@@ -20,6 +20,12 @@ static int	find_call(void)
     int		status;
     t_head	*stack;
     long	ret;
+    int		fd;
+
+    /* On recupere le fd du fichier de config du graph 
+     * (Remplacer null par le nom du fichier, sinon output.dot sera cree par default) */
+    fd = get_fd_file(NULL);
+    output_begin(fd);
 
     stack = stack_init();
     while (true)
@@ -45,8 +51,10 @@ static int	find_call(void)
 	/* (un call commence par 0xe8 mais toutes les addresses qui commence par 0xe8 ne sont pas des calls) */
 	if ((ret & 0xff) == 0xe8)
 	{
-	    printf("Possible call -->%lx \t", ret);
-	    printf("ADDR = %llx\n", reg.rip);
+	    /*printf("Possible call -->%lx \t", ret);*/
+	    /*printf("ADDR = %llx\n", reg.rip);*/
+	    if (stack->size > 1)
+		output_add_addr(fd, stack->head->addr, reg.rip);
 	    stack_add(stack, reg.rip);
 	}    
 	/* --------------------------------- */
@@ -60,6 +68,8 @@ static int	find_call(void)
 	if (WIFEXITED(status))
 	{
 	    printf("+++ exited with %d +++\n", status);
+	    /* On ferme le fichier */
+	    output_end(fd);
 	    return (status);
 	}
 	if (is_syscall)
@@ -68,6 +78,7 @@ static int	find_call(void)
 	    print_syscall(&reg);
 	}
     }
+    output_end(fd);
     return (0);
 }
 

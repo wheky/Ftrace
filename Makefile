@@ -20,7 +20,8 @@ NAME      = ftrace
 SRC       = main.c		\
 	    print.c     	\
 	    sighandler.c 	\
-	    stack.c
+	    stack.c		\
+	    manage_output.c
 
 all: depend $(NAME)
 

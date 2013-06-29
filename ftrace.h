@@ -11,6 +11,8 @@
 #ifndef STRACE_H
 #define STRACE_H
 
+#define _GNU_SOURCE
+
 #include <unistd.h>
 #include <stdbool.h>
 #include <stdio.h>
@@ -26,6 +28,8 @@
 #include <sys/user.h>
 #include <asm/unistd.h>
 #include <string.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 
 #define RET -1
 
@@ -49,5 +53,13 @@ void	print_value(t_reg reg, t_type type);
 void	print_syscall(const struct user_regs_struct *reg);
 
 void	sighandler(int);
+
+typedef	long long unsigned int	_ADDR;
+
+/* MANAGE_OUTPUT_C */
+int	get_fd_file(char *file); /* NULL = output.dot*/
+void	output_begin(int fd);
+void	output_end(int fd);
+void	output_add_addr(int fd, _ADDR from, _ADDR to);
 
 #endif /* STRACE_H */
