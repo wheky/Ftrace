@@ -9,6 +9,7 @@
 */
 
 #include "ftrace.h"
+#include "stack.h"
 
 pid_t	g_pid;
 
@@ -17,28 +18,38 @@ static int	find_call(void)
     struct 	user_regs_struct reg;
     bool	is_syscall;
     int		status;
+    t_head	*stack;
+    long	ret;
 
+    stack = stack_init();
     while (true)
     {
 	is_syscall = false;
 	ptrace(PTRACE_GETREGS, g_pid, (void *)0, &reg);
 
-	/* ON testera si c'est un call ici */
-	if ((ptrace(PTRACE_PEEKTEXT, g_pid, reg.rip, 0) & 0xffff) == 0x050f)
+	/* On testera si c'est un call ici */
+	if (((ret = ptrace(PTRACE_PEEKTEXT, g_pid, reg.rip, 0)) & 0xffff) == 0x050f)
 	    is_syscall = true;
 
-	/* TODO REMOVE */
-	    is_syscall = false;
+	/* On testera si c'est un return ici */
+	if ((ret & 0xff) == 0xe8 && false)
+	    stack_pop(stack); 
+	/* --------------------------------- */
 
-	if ((ptrace(PTRACE_PEEKTEXT, g_pid, reg.rip, 0) & 0xff) == 0xe8)
+	/* TODO REMOVE (disable syscall) */
+	is_syscall = false;
+
+
+	/* ---- Si l'action est un call ---- */
+	/* Il faudra affiner la recherche ici */
+	/* (un call commence par 0xe8 mais toutes les addresses qui commence par 0xe8 ne sont pas des calls) */
+	if ((ret & 0xff) == 0xe8)
 	{
-	    printf("Possible call -->%lx \t", ptrace(PTRACE_PEEKTEXT, g_pid, reg.rip, 0));
-	    printf("ADDR = %lx\n", reg.rip);
+	    printf("Possible call -->%lx \t", ret);
+	    printf("ADDR = %llx\n", reg.rip);
+	    stack_add(stack, reg.rip);
 	}    
-	/*if (reg.rip == 0x400522)*/
-	/*{*/
-	/*printf("*********************%lx\n", ptrace(PTRACE_PEEKTEXT, g_pid, reg.rip, 0));*/
-	/*}*/
+	/* --------------------------------- */
 
 	if (ptrace(PTRACE_SINGLESTEP, g_pid, (void *)0, (void *)0) < 0)
 	{

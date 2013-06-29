@@ -8,18 +8,19 @@
 ## Last update Mon May 06 16:21:09 2013 olivier gayot
 ##
 
-CC       ?= gcc
+CC       ?= gcc 
 CFLAGS   += -W -Wall -std=c99 -Wextra -D _BSD_SOURCE
 
 ## uncomment the following line to use generated syscall table
 ## (launch make gen before) You can also add -D USE_GENERATED to the CFLAGS
 ## environment variable.
- CFLAGS += -D USE_GENERATED
+ CFLAGS += -D USE_GENERATED -g
 
 NAME      = ftrace
-SRC       = main.c	\
-	    print.c     \
-	    sighandler.c
+SRC       = main.c		\
+	    print.c     	\
+	    sighandler.c 	\
+	    stack.c
 
 all: depend $(NAME)
 
@@ -33,7 +34,7 @@ include .depend
 
 OBJ     = $(SRC:.c=.o)
 
-$(NAME): $(OBJ)
+$(NAME): $(OBJ) 
 	$(CC) -o $@ $^ $(LDFLAGS)
 
 gen:
