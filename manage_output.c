@@ -41,6 +41,6 @@ void		output_add_addr(int fd, _ADDR from, _ADDR to)
 {
     char	*line;
 
-    asprintf(&line, "%llx -> %llx\n", from, to);
+    asprintf(&line, "\"%llx\" -> \"%llx\"\n", from, to);
     write(fd, line, strlen(line));
 }
