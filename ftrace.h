@@ -36,7 +36,7 @@
 
 typedef	unsigned long long int t_reg;
 
-typedef enum	s_type{
+typedef enum	s_type {
     VOID,
     INT,
     STRING,
@@ -46,6 +46,13 @@ typedef enum	s_type{
     STRUCT,
     VARARGS
 }		t_type;
+
+typedef enum	s_typeCall {
+    SYSCALL_FCT,
+    SYSCALL_NAME,
+    CALL_FCT,
+    CALL_NAME
+}		t_typeCall;
 
 extern pid_t	g_pid;
 
@@ -59,7 +66,7 @@ void	sighandler(int);
 int	get_fd_file(char *file); /* NULL = output.dot*/
 void	output_begin(int fd);
 void	output_end(int fd);
-void	output_add_addr(int fd, _ADDR from, _ADDR to);
+void	output_add_addr(int fd, _ADDR from, _ADDR to, t_typeCall t);
 
 /* FIND_C */
 void	find_syscall(long ret, int fd, t_head *stack, struct user_regs_struct *reg);

@@ -29,6 +29,7 @@ int	get_fd_file(char *file) /* NULL = output.dot */
 void	output_begin(int fd)
 {
     write(fd, "digraph G {\n", 12);
+    write(fd, "node [style=filled];\n", 21);
 }
 
 void	output_end(int fd)
@@ -37,10 +38,15 @@ void	output_end(int fd)
     close(fd);
 }
 
-void		output_add_addr(int fd, _ADDR from, _ADDR to)
+void		output_add_addr(int fd, _ADDR from, _ADDR to, t_typeCall t)
 {
     char	*line;
 
-    asprintf(&line, "\"%llx\" -> \"%llx\"\n", from, to);
+    asprintf(&line, "\"%llx\" -> \"%llx\";\n", from, to);
+    write(fd, line, strlen(line));
+    if (t == CALL_NAME || t == CALL_FCT)
+	asprintf(&line, "\"%llx\" [color=lightblue2];\n", from);
+    else 
+	asprintf(&line, "\"%llx\" [shape=box, color=red];\n", from);
     write(fd, line, strlen(line));
 }

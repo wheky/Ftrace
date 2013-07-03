@@ -16,7 +16,7 @@ void	find_syscall(long ret, int fd, t_head *stack, struct user_regs_struct *reg)
     if ((ret & 0xffff) == 0x050f)
     {
 	if (stack->size > 0)
-	    output_add_addr(fd, stack->head->addr, reg->rax);
+	    output_add_addr(fd, stack->head->addr, reg->rax, SYSCALL_FCT);
     }
 }
 
@@ -45,7 +45,7 @@ void	find_call(long ret, int fd, t_head *stack, struct user_regs_struct *reg, pi
 	    if (ptrace(PTRACE_PEEKTEXT, pid, reg->rip - (offset - 5), 0) != ~0)
 	    {
 		if (stack->size > 0)
-		    output_add_addr(fd, stack->head->addr, reg->rip - (offset - 5));
+		    output_add_addr(fd, stack->head->addr, reg->rip - (offset - 5), CALL_FCT);
 		stack_add(stack, reg->rip - (offset - 5));
 	    }
 	}
@@ -54,7 +54,7 @@ void	find_call(long ret, int fd, t_head *stack, struct user_regs_struct *reg, pi
 	    if (ptrace(PTRACE_PEEKTEXT, pid, reg->rip + offset + 5, 0) != ~0)
 	    {
 		if (stack->size > 0)
-		    output_add_addr(fd, stack->head->addr, reg->rip + offset + 5);
+		    output_add_addr(fd, stack->head->addr, reg->rip + offset + 5, CALL_FCT);
 		stack_add(stack, reg->rip + offset + 5);
 	    }
 	}
