@@ -30,12 +30,11 @@
 #include <string.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include "stack.h"
 
 #define RET -1
 
 typedef	unsigned long long int t_reg;
-
-extern pid_t	g_pid;
 
 typedef enum	s_type{
     VOID,
@@ -48,18 +47,23 @@ typedef enum	s_type{
     VARARGS
 }		t_type;
 
+extern pid_t	g_pid;
+
 /* PRINT_C */
 void	print_value(t_reg reg, t_type type);
 void	print_syscall(const struct user_regs_struct *reg);
 
 void	sighandler(int);
 
-typedef	long long unsigned int	_ADDR;
-
 /* MANAGE_OUTPUT_C */
 int	get_fd_file(char *file); /* NULL = output.dot*/
 void	output_begin(int fd);
 void	output_end(int fd);
 void	output_add_addr(int fd, _ADDR from, _ADDR to);
+
+/* FIND_C */
+void	find_syscall(long ret, int fd, t_head *stack, struct user_regs_struct *reg);
+void	find_return(long ret, t_head *stack, struct user_regs_struct *reg, pid_t pid);
+void	find_call(long ret, int fd, t_head *stack, struct user_regs_struct *reg, pid_t pid);
 
 #endif /* STRACE_H */

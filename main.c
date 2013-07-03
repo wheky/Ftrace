@@ -13,19 +13,15 @@
 
 pid_t	g_pid;
 
-static int	find_call(void)
+static int	find_graph(void)
 {
     struct 	user_regs_struct reg;
     int		status;
     t_head	*stack;
     long	ret;
-    long	sp;
     int		fd;
-    int		offset;
 
-    /* On recupere le fd du fichier de config du graph 
-     * (Remplacer null par le nom du fichier, sinon output.dot sera cree par default) */
-    fd = get_fd_file(NULL);
+    fd = get_fd_file(NULL); /* Remplacer null par le nom du fichier, sinon output.dot sera cree par default */
     output_begin(fd);
 
     stack = stack_init();
@@ -34,49 +30,10 @@ static int	find_call(void)
 	ptrace(PTRACE_GETREGS, g_pid, (void *)0, &reg);
 
 	ret = ptrace(PTRACE_PEEKTEXT, g_pid, reg.rip, 0);
-	/* On test si c'est un syscall */
-	if ((ret & 0xffff) == 0x050f)
-	{
-	    if (stack->size > 0)
-		output_add_addr(fd, stack->head->addr, reg.rax);
-	}
-	/* --------------------------------- */
-
-	/* On test si c'est un return */
-	if ((ret & 0xff) == 0xc3)
-	{
-	    sp = ptrace(PTRACE_PEEKTEXT, g_pid, reg.rsp, 0);
-	    if (ptrace(PTRACE_PEEKTEXT, g_pid, sp, 0) != ~0 && stack->size > 0)
-		stack_pop(stack); 
-	}
-	/* --------------------------------- */
-
-	/* On test si c'est un call */
-	if ((ret & 0xff) == 0xe8)
-	{
-	    offset = ret >> 8;
-	    if (offset < 0)
-	    {
-		offset = ~offset + 1;
-		if (ptrace(PTRACE_PEEKTEXT, g_pid, reg.rip - (offset - 5), 0) != ~0)
-		{
-		    if (stack->size > 0)
-			output_add_addr(fd, stack->head->addr, reg.rip - (offset - 5));
-		    stack_add(stack, reg.rip - (offset - 5));
-		}
-	    }
-	    else
-	    {
-		if (ptrace(PTRACE_PEEKTEXT, g_pid, reg.rip + offset + 5, 0) != ~0)
-		{
-		    if (stack->size > 0)
-			output_add_addr(fd, stack->head->addr, reg.rip + offset + 5);
-		    stack_add(stack, reg.rip + offset + 5);
-		}
-	    }
-	    /*printf("%d\n", stack->size);*/
-	}    
-	/* --------------------------------- */
+	
+	find_syscall(ret, fd, stack, &reg);
+	find_return(ret, stack, &reg, g_pid);
+	find_call(ret, fd, stack, &reg, g_pid);
 
 	if (ptrace(PTRACE_SINGLESTEP, g_pid, (void *)0, (void *)0) < 0)
 	{
@@ -87,7 +44,6 @@ static int	find_call(void)
 	if (WIFEXITED(status))
 	{
 	    printf("+++ exited with %d +++\n", status);
-	    /* On ferme le fichier */
 	    output_end(fd);
 	    return (status);
 	}
@@ -114,7 +70,7 @@ static int	trace(pid_t pid)
 	fprintf(stderr, "unexpected status\n");
 	return (-1);
     }
-    return (find_call());
+    return (find_graph());
 }
 
 static int	launch_and_trace(char **argv)

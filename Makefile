@@ -21,6 +21,7 @@ SRC       = main.c		\
 	    print.c     	\
 	    sighandler.c 	\
 	    stack.c		\
+	    find.c		\
 	    manage_output.c
 
 all: depend $(NAME)
