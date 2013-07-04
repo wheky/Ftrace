@@ -9,7 +9,7 @@
 ##
 
 CC       ?= gcc 
-CFLAGS   += -W -Wall -std=c99 -Wextra -D _BSD_SOURCE
+CFLAGS   += -W -Wall -std=c99 -Wextra -D _BSD_SOURCE -I./include
 
 ## uncomment the following line to use generated syscall table
 ## (launch make gen before) You can also add -D USE_GENERATED to the CFLAGS
@@ -23,6 +23,8 @@ SRC       = main.c		\
 	    stack.c		\
 	    find.c		\
 	    manage_output.c
+VPATH	  = ./src
+OBJDIR	  = ./obj
 
 all: depend $(NAME)
 
@@ -34,7 +36,10 @@ depend: .depend
 
 include .depend
 
-OBJ     = $(SRC:.c=.o)
+OBJ	:=	$(addprefix $(OBJDIR)/,$(notdir $(SRC:.c=.o)))
+
+$(OBJDIR)/%.o: %.c
+	$(CC) $(CFLAGS) -c -o $@ $<
 
 $(NAME): $(OBJ) 
 	$(CC) -o $@ $^ $(LDFLAGS)

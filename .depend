@@ -1,0 +1,6 @@
+main.o: main.c ftrace.h stack.h
+print.o: print.c ftrace.h stack.h errno.h syscalls.h tab_syscalls.h
+sighandler.o: sighandler.c
+stack.o: stack.c stack.h
+find.o: find.c ftrace.h stack.h syscalls.h tab_syscalls.h
+manage_output.o: manage_output.c ftrace.h stack.h
