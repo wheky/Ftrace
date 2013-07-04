@@ -13,7 +13,8 @@
 
 #include <stdlib.h>
 
-typedef	long long unsigned int	_ADDR;
+/*typedef	long long unsigned int	_ADDR;*/
+typedef	char *	_ADDR;
 
 typedef struct		s_stack
 {

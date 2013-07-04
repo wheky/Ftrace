@@ -66,7 +66,7 @@ void		stack_pop(t_head *stack)
 _ADDR		stack_get_first(t_head *stack)
 {
     if (stack == NULL || stack->head == NULL)
-	return -1;
+	return NULL;
     return stack->head->addr;
 }
 

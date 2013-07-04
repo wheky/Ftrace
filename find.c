@@ -10,17 +10,44 @@
 
 #include "ftrace.h"
 #include "stack.h"
+#include "syscalls.h"
 
-void	find_syscall(long ret, int fd, t_head *stack, struct user_regs_struct *reg)
+void	find_syscall(long ret, int fd, t_head *stack, struct user_regs_struct *reg, pid_t pid)
 {
+    t_syscall_entry	syscall;
+    int			status;
+
     if ((ret & 0xffff) == 0x050f)
     {
 	if (stack->size > 0)
-	    output_add_addr(fd, stack->head->addr, reg->rax, SYSCALL_FCT);
+	{
+	    if (ptrace(PTRACE_SINGLESTEP, pid, (void *)0, (void *)0) < 0)
+	    {
+		fprintf(stderr, "simplestep: %m\n");
+		output_end(fd);
+		exit(-1);
+	    }
+	    wait(&status);
+	    if (WIFEXITED(status))
+	    {
+		printf("+++ exited with %d +++\n", status);
+		output_end(fd);
+		exit(-1);
+	    }
+	    if (WIFSIGNALED(status))
+	    {
+		printf("+++ kill by %d +++\n", WTERMSIG(status));
+		output_end(fd);
+		exit(-1);
+	    }
+	    ptrace(PTRACE_GETREGS, pid, (void *)0, reg);
+	    syscall = g_syscall[reg->orig_rax];
+	    output_add_addr(fd, stack->head->addr, syscall.name, SYSCALL_NAME);
+	}
     }
 }
 
-void	find_return(long ret, t_head *stack, struct user_regs_struct *reg, pid_t pid)
+void		find_return(long ret, t_head *stack, struct user_regs_struct *reg, pid_t pid)
 {
     long	sp;
 
@@ -32,9 +59,10 @@ void	find_return(long ret, t_head *stack, struct user_regs_struct *reg, pid_t pi
     }
 }
 
-void	find_call(long ret, int fd, t_head *stack, struct user_regs_struct *reg, pid_t pid)
+void		find_call(long ret, int fd, t_head *stack, struct user_regs_struct *reg, pid_t pid)
 {
-    int	offset;
+    int		offset;
+    char	*to;
 
     if ((ret & 0xff) == 0xe8)
     {
@@ -45,8 +73,11 @@ void	find_call(long ret, int fd, t_head *stack, struct user_regs_struct *reg, pi
 	    if (ptrace(PTRACE_PEEKTEXT, pid, reg->rip - (offset - 5), 0) != ~0)
 	    {
 		if (stack->size > 0)
-		    output_add_addr(fd, stack->head->addr, reg->rip - (offset - 5), CALL_FCT);
-		stack_add(stack, reg->rip - (offset - 5));
+		{
+		    asprintf(&to, "%llx", reg->rip - (offset - 5));
+		    output_add_addr(fd, stack->head->addr, to, CALL_FCT);
+		}
+		stack_add(stack, to);
 	    }
 	}
 	else
@@ -54,8 +85,11 @@ void	find_call(long ret, int fd, t_head *stack, struct user_regs_struct *reg, pi
 	    if (ptrace(PTRACE_PEEKTEXT, pid, reg->rip + offset + 5, 0) != ~0)
 	    {
 		if (stack->size > 0)
-		    output_add_addr(fd, stack->head->addr, reg->rip + offset + 5, CALL_FCT);
-		stack_add(stack, reg->rip + offset + 5);
+		{
+		    asprintf(&to, "%llx", reg->rip + offset + 5);
+		    output_add_addr(fd, stack->head->addr, to, CALL_FCT);
+		}
+		stack_add(stack, to);
 	    }
 	}
     }    

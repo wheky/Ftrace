@@ -42,11 +42,13 @@ void		output_add_addr(int fd, _ADDR from, _ADDR to, t_typeCall t)
 {
     char	*line;
 
-    asprintf(&line, "\"%llx\" -> \"%llx\";\n", from, to);
+    if (from == NULL)
+	from = strdup("? START ?");
+    asprintf(&line, "\"%s\" -> \"%s\";\n", from, to);
     write(fd, line, strlen(line));
-    if (t == CALL_NAME || t == CALL_FCT)
-	asprintf(&line, "\"%llx\" [color=lightblue2];\n", from);
+    if (t == SYSCALL_NAME)
+	asprintf(&line, "\"%s\" [shape=box, color=red];\n", to);
     else 
-	asprintf(&line, "\"%llx\" [shape=box, color=red];\n", from);
+	asprintf(&line, "\"%s\" [color=lightblue2];\n", to);
     write(fd, line, strlen(line));
 }
