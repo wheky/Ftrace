@@ -1,7 +1,0 @@
-
-digraph G {
-    main -> printf;
-    printf -> strlen;
-    main -> read_file;
-    read_file -> read;
-}
