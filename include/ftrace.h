@@ -31,6 +31,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include "stack.h"
+#include "get_static.h"
 
 #define RET -1
 
@@ -71,6 +72,6 @@ void	output_add_addr(int fd, _ADDR from, _ADDR to, t_typeCall t);
 /* FIND_C */
 void	find_syscall(long ret, int fd, t_head *stack, struct user_regs_struct *reg, pid_t pid);
 void	find_return(long ret, t_head *stack, struct user_regs_struct *reg, pid_t pid);
-void	find_call(long ret, int fd, t_head *stack, struct user_regs_struct *reg, pid_t pid);
+void	find_call(long ret, int fd, t_head *stack, struct user_regs_struct *reg, pid_t pid, t_h *list);
 
 #endif /* STRACE_H */

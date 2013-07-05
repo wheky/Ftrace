@@ -13,7 +13,7 @@
 
 pid_t	g_pid;
 
-static int	find_graph(void)
+static int	find_graph(t_h *list)
 {
     struct 	user_regs_struct reg;
     int		status;
@@ -24,6 +24,7 @@ static int	find_graph(void)
     fd = get_fd_file(NULL); /* Remplacer null par le nom du fichier, sinon output.dot sera cree par default */
     output_begin(fd);
 
+    print_list(list);
     stack = stack_init();
     while (true)
     {
@@ -31,7 +32,7 @@ static int	find_graph(void)
 
 	ret = ptrace(PTRACE_PEEKTEXT, g_pid, reg.rip, 0);
 	
-	find_call(ret, fd, stack, &reg, g_pid);
+	find_call(ret, fd, stack, &reg, g_pid, list);
 	find_syscall(ret, fd, stack, &reg, g_pid);
 	find_return(ret, stack, &reg, g_pid);
 
@@ -52,7 +53,7 @@ static int	find_graph(void)
     return (0);
 }
 
-static int	trace(pid_t pid)
+static int	trace(pid_t pid, t_h *list)
 {
     int		status;
 
@@ -70,13 +71,19 @@ static int	trace(pid_t pid)
 	fprintf(stderr, "unexpected status\n");
 	return (-1);
     }
-    return (find_graph());
+    return (find_graph(list));
 }
 
 static int	launch_and_trace(char **argv)
 {
     pid_t	cpid;
+    int		fd;
+    t_h		*list;
 
+    if ((fd = open(argv[0], O_RDONLY)) < 0)
+	list = NULL;
+    else
+	list = call_my_nm(fd);
     if ((cpid = fork()) < 0)
     {
 	fprintf(stderr, "Fork failed: %m\n");
@@ -89,7 +96,7 @@ static int	launch_and_trace(char **argv)
 	fprintf(stderr, "%s: %m\n", argv[0]);
 	exit(-1);
     }
-    return (trace(cpid));
+    return (trace(cpid, list));
 }
 
 int	main(int argc, char *argv[])
@@ -106,7 +113,7 @@ int	main(int argc, char *argv[])
 	    fprintf(stderr, "Usage: %s [-p pid] | PROG [ARGS]\n", argv[0]);
 	    return (-1);
 	}
-	return (trace(atoi(argv[2])));
+	return (trace(atoi(argv[2]), NULL));
     }
     return (launch_and_trace(argv + 1));
 }

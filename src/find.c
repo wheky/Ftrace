@@ -59,7 +59,33 @@ void		find_return(long ret, t_head *stack, struct user_regs_struct *reg, pid_t p
     }
 }
 
-void		find_call(long ret, int fd, t_head *stack, struct user_regs_struct *reg, pid_t pid)
+void		write_and_add(int fd, t_head *stack, t_h *list,  char *to)
+{
+    char	*name;
+
+    name = get_name(list, to);
+    if (stack->size > 0)
+    {
+	if (name != NULL)
+	    output_add_addr(fd, stack->head->addr, name, CALL_FCT);
+	else
+	    output_add_addr(fd, stack->head->addr, to, CALL_FCT);
+    }
+    else
+    {
+	if (name != NULL)
+	    output_add_addr(fd, "? _start_ ?", name, CALL_FCT);
+	else
+	    output_add_addr(fd, "? _start_ ?", to, CALL_FCT);
+    }
+    if (name == NULL)
+	stack_add(stack, to);
+    else
+	stack_add(stack, name);
+
+}
+
+void		find_call(long ret, int fd, t_head *stack, struct user_regs_struct *reg, pid_t pid, t_h *list)
 {
     int		offset;
     char	*to;
@@ -73,11 +99,24 @@ void		find_call(long ret, int fd, t_head *stack, struct user_regs_struct *reg, p
 	    if (ptrace(PTRACE_PEEKTEXT, pid, reg->rip - (offset - 5), 0) != ~0)
 	    {
 		asprintf(&to, "%llx", reg->rip - (offset - 5));
-		if (stack->size > 0)
-		    output_add_addr(fd, stack->head->addr, to, CALL_FCT);
-		else
-		    output_add_addr(fd, "? _start_ ?", to, CALL_FCT);
-		stack_add(stack, to);
+		write_and_add(fd, stack, list, to);
+		/*asprintf(&to, "%llx", reg->rip - (offset - 5));*/
+		/*name = get_name(list, to);*/
+		/*if (stack->size > 0)*/
+		/*{*/
+		/*if (name != NULL)*/
+		/*output_add_addr(fd, stack->head->addr, name, CALL_FCT);*/
+		/*else*/
+		/*output_add_addr(fd, stack->head->addr, to, CALL_FCT);*/
+		/*}*/
+		/*else*/
+		/*{*/
+		/*if (name != NULL)*/
+		/*output_add_addr(fd, "? _start_ ?", name, CALL_FCT);*/
+		/*else*/
+		/*output_add_addr(fd, "? _start_ ?", to, CALL_FCT);*/
+		/*}*/
+		/*stack_add(stack, to);*/
 	    }
 	}
 	else
@@ -85,12 +124,27 @@ void		find_call(long ret, int fd, t_head *stack, struct user_regs_struct *reg, p
 	    if (ptrace(PTRACE_PEEKTEXT, pid, reg->rip + offset + 5, 0) != ~0)
 	    {
 		asprintf(&to, "%llx", reg->rip + offset + 5);
-		if (stack->size > 0)
-		    output_add_addr(fd, stack->head->addr, to, CALL_FCT);
-		else
-		    output_add_addr(fd, "? _start_ ?", to, CALL_FCT);
-		stack_add(stack, to);
+		write_and_add(fd, stack, list, to);
+		/*asprintf(&to, "%llx", reg->rip + offset + 5);*/
+
+		/*name = get_name(list, to);*/
+		/*if (stack->size > 0)*/
+		/*{*/
+		/*if (name != NULL)*/
+		/*output_add_addr(fd, stack->head->addr, name, CALL_FCT);*/
+		/*else*/
+		/*output_add_addr(fd, stack->head->addr, to, CALL_FCT);*/
+		/*}*/
+		/*else*/
+		/*{*/
+		/*if (name != NULL)*/
+		/*output_add_addr(fd, "? _start_ ?", name, CALL_FCT);*/
+		/*else*/
+		/*output_add_addr(fd, "? _start_ ?", to, CALL_FCT);*/
+		/*}*/
+		/*stack_add(stack, to);*/
 	    }
 	}
     }    
 }
+
