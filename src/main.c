@@ -24,7 +24,6 @@ static int	find_graph(t_h *list)
     fd = get_fd_file(NULL); /* Remplacer null par le nom du fichier, sinon output.dot sera cree par default */
     output_begin(fd);
 
-    print_list(list);
     stack = stack_init();
     while (true)
     {
