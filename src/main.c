@@ -31,9 +31,9 @@ static int	find_graph(void)
 
 	ret = ptrace(PTRACE_PEEKTEXT, g_pid, reg.rip, 0);
 	
+	find_call(ret, fd, stack, &reg, g_pid);
 	find_syscall(ret, fd, stack, &reg, g_pid);
 	find_return(ret, stack, &reg, g_pid);
-	find_call(ret, fd, stack, &reg, g_pid);
 
 	if (ptrace(PTRACE_SINGLESTEP, g_pid, (void *)0, (void *)0) < 0)
 	{
