@@ -1,0 +1,9 @@
+#!/bin/bash
+
+if [ $# == 1 ]
+then
+./ftrace $1 ; dot -Tpng output.dot -o tmp.png ; viewnior tmp.png
+else
+./ftrace $1 $2 ; dot -Tpng output.dot -o tmp.png ; viewnior tmp.png
+fi
+   
