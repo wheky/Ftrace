@@ -63,27 +63,30 @@ void		write_and_add(int fd, t_head *stack, t_h *list,  char *to)
 {
     char	*name;
     char	*func_addr;
+    char	*name_and_addr;
 
     asprintf(&func_addr, "func_0x%s", to);
     name = get_name(list, to);
+    if (name != NULL)
+	asprintf(&name_and_addr, "%s\n( %s )", name, func_addr);
     if (stack->size > 0)
     {
 	if (name != NULL)
-	    output_add_addr(fd, stack->head->addr, name, CALL_FCT);
+	    output_add_addr(fd, stack->head->addr, name_and_addr, CALL_NAME);
 	else
 	    output_add_addr(fd, stack->head->addr, func_addr, CALL_FCT);
     }
     else
     {
 	if (name != NULL)
-	    output_add_addr(fd, "? _start_ ?", name, CALL_FCT);
+	    output_add_addr(fd, "? _start_ ?", name_and_addr, CALL_NAME);
 	else
 	    output_add_addr(fd, "? _start_ ?", func_addr, CALL_FCT);
     }
     if (name == NULL)
 	stack_add(stack, func_addr);
     else
-	stack_add(stack, name);
+	stack_add(stack, name_and_addr);
 
 }
 
