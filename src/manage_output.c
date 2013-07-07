@@ -55,6 +55,8 @@ void		output_add_addr(int fd, _ADDR from, _ADDR to, t_typeCall t)
 	asprintf(&line, "\"%s\" [color=mediumorchid2];\n", to);
     else if (t == CALL_LINKED)
 	asprintf(&line, "\"%s\" [color=purple];\n", to);
+    else if (t == MAIN)
+	asprintf(&line, "\"%s\" [shape=diamond, style=radial, color=gold, fontsize=20.0];\n", to);
     else
 	asprintf(&line, "\"%s\" [color=lightblue2];\n", to);
     write(fd, line, strlen(line));

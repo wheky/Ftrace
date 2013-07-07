@@ -21,7 +21,7 @@ typedef enum	s_typeCall {
     CALL_LINKED,
     CALL_UNLINKED,
     CALL_STATIC,
-    DYN_FCT
+    MAIN
 }		t_typeCall;
 
 
