@@ -77,7 +77,6 @@ t_h		*print_sh_name_64(t_file_64 *file)
 	  while (j < file->shdr[i].sh_size)
 	  {
 	    Elf64_Rela* p = (void *) file->elf + file->shdr[i].sh_offset + j;
-	    //printf("%p\n", (void *) (p++)->r_offset);
 	    j += sizeof(Elf64_Rela);
 	  }
 	}

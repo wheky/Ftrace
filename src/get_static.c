@@ -50,7 +50,6 @@ t_h	*call_my_nm(int fd)
     if (file->elf->e_ident[EI_CLASS] == ELFCLASS64)
     {
       t_h *list = manage_64(file);
-      printf("UNMAP\n");
         munmap(data, size);
 	return (list);
     }
