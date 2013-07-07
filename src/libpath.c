@@ -51,8 +51,8 @@ void		add_lpath(char ***tab, char *lpath)
 	*tab = malloc(2 * sizeof (char *));
 	if (*tab == NULL)
 	    return ;
-	*tab[0] = strdup(lpath);
-	*tab[1] = NULL;
+	(*tab)[0] = strdup(lpath);
+	(*tab)[1] = NULL;
     }
     else
     {
@@ -62,7 +62,7 @@ void		add_lpath(char ***tab, char *lpath)
 		return ;
 	    i++;
 	}
-	*tab = realloc(*tab, i * sizeof (char *) + 2);
+	*tab = realloc(*tab, (i + 2) * sizeof (char *));
 	(*tab)[i] = strdup(lpath);
 	(*tab)[i + 1] = NULL;
     }
