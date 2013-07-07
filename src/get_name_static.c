@@ -19,7 +19,7 @@ int		print_result_64(char *tab, t_file_64 *file, int i,
 
     asprintf(&addr, "%x", (unsigned int)file->symtab[i].st_value);
     asprintf(&name, "%s", &tab[file->symtab[i].st_name]);
-    list_add(list, addr, name);
+    list_add(list, addr, name, CALL_STATIC);
     return (0);
 }
 
@@ -73,12 +73,12 @@ t_h		*print_sh_name_64(t_file_64 *file)
 	     my_error();
 	if (file->shdr[i].sh_type == SHT_RELA)
 	{
-	  unsigned j = 0;
+	  /*unsigned j = 0;
 	  while (j < file->shdr[i].sh_size)
 	  {
 	    Elf64_Rela* p = (void *) file->elf + file->shdr[i].sh_offset + j;
 	    j += sizeof(Elf64_Rela);
-	  }
+	  }*/
 	}
 	if (file->shdr[i].sh_type == SHT_SYMTAB)
 	    return (manage_symtab_64(file, i));

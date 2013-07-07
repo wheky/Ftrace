@@ -121,7 +121,7 @@ void		gotplt_add_dynamic_symbol(t_h *symbols, reg64_t caller_rip,
     asprintf(&straddr, "%x", (unsigned int) rip);
     asprintf(&name, "%s", (char *) __dynstr + ((Elf64_Sym *)((void *) __elf
 	  + __dynsym->sh_offset))[ndx].st_name);
-    list_add(symbols, straddr, name);
+    list_add(symbols, straddr, name, CALL_LINKED);
     if (!strcmp(name, "dlsym"))
     {
       g_symbol_loader = (void *) rip;

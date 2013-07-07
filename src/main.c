@@ -12,6 +12,7 @@
 #include "stack.h"
 #include "gotplt.h"
 #include "get_dynamic.h"
+#include "libpath.h"
 
 pid_t	g_pid;
 
@@ -20,14 +21,21 @@ static int	find_graph(t_h *list)
     struct 	user_regs_struct reg;
     int		status;
     t_head	*stack;
+    char	**libpath;
     long	ret;
     int		fd;
     char	*addr;
     char	*name;
+    int 	i = 0;
 
     fd = get_fd_file(NULL); /* Remplacer null par le nom du fichier, sinon output.dot sera cree par default */
     output_begin(fd);
     stack = stack_init();
+    libpath = get_shared_libpath(g_pid);
+    dprintf(fd, "\"Shared Library \n");
+    while (libpath && libpath[i])
+	dprintf(fd, "%s\n", libpath[i++]);
+    dprintf(fd, "\"[fontsize=17.0, shape=box3d, color=chocolate2];\n");
     while (true)
     {
 	ptrace(PTRACE_GETREGS, g_pid, (void *)0, &reg);
@@ -38,7 +46,7 @@ static int	find_graph(t_h *list)
 	{
 	  asprintf(&addr, "%llx", (unsigned long long) reg.rax);
 	  asprintf(&name, "%s", g_symbol_name);
-	  list_add(list, addr, name);
+	  list_add(list, addr, name, CALL_UNLINKED);
 	}
 	
 	find_call(ret, fd, stack, &reg, g_pid, list);

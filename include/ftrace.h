@@ -31,6 +31,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include "stack.h"
+#include "list.h"
 #include "get_static.h"
 
 #define RET -1
@@ -47,14 +48,6 @@ typedef enum	s_type {
     STRUCT,
     VARARGS
 }		t_type;
-
-typedef enum	s_typeCall {
-    SYSCALL_FCT,
-    SYSCALL_NAME,
-    CALL_FCT,
-    CALL_NAME,
-    DYN_FCT
-}		t_typeCall;
 
 extern pid_t	g_pid;
 
