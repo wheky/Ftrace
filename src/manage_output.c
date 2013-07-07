@@ -49,9 +49,11 @@ void		output_add_addr(int fd, _ADDR from, _ADDR to, t_typeCall t)
     write(fd, line, strlen(line));
     if (t == SYSCALL_NAME)
 	asprintf(&line, "\"%s\" [shape=box, color=red];\n", to);
-    else if (t == CALL_NAME)
+    else if (t == CALL_STATIC)
 	asprintf(&line, "\"%s\" [color=springgreen4];\n", to);
-    else if (t == DYN_FCT)
+    else if (t == CALL_LINKED)
+	asprintf(&line, "\"%s\" [color=mediumorchid2];\n", to);
+    else if (t == CALL_UNLINKED)
 	asprintf(&line, "\"%s\" [color=purple];\n", to);
     else
 	asprintf(&line, "\"%s\" [color=lightblue2];\n", to);
