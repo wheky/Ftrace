@@ -74,10 +74,7 @@ static int	trace(int fd, pid_t pid, t_h *list)
 	return (-1);
     }
     if (fd != -1)
-    {
-      printf("INITIALIZED\n");
       gotplt_initialize(fd);
-    }
     return (find_graph(list));
 }
 
