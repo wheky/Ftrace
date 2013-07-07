@@ -12,6 +12,7 @@
 #include "stack.h"
 #include "syscalls.h"
 #include "gotplt.h"
+#include "list.h"
 
 void	find_syscall(long ret, int fd, t_head *stack, struct user_regs_struct *reg, pid_t pid)
 {
@@ -65,22 +66,26 @@ void		write_and_add(int fd, t_head *stack, t_h *list,  char *to)
     char	*name;
     char	*func_addr;
     char	*name_and_addr;
+    t_typeCall	t;
 
     asprintf(&func_addr, "func_0x%s", to);
     name = get_name(list, to);
     if (name != NULL)
+    {
 	asprintf(&name_and_addr, "%s\n( %s )", name, func_addr);
+	t = get_type(list, to);
+    }
     if (stack->size > 0)
     {
 	if (name != NULL)
-	    output_add_addr(fd, stack->head->addr, name_and_addr, CALL_NAME);
+	    output_add_addr(fd, stack->head->addr, name_and_addr, t);
 	else
 	    output_add_addr(fd, stack->head->addr, func_addr, CALL_FCT);
     }
     else
     {
 	if (name != NULL)
-	    output_add_addr(fd, "? _start_ ?", name_and_addr, CALL_NAME);
+	    output_add_addr(fd, "? _start_ ?", name_and_addr, t);
 	else
 	    output_add_addr(fd, "? _start_ ?", func_addr, CALL_FCT);
     }

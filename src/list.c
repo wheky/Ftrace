@@ -38,13 +38,14 @@ void			print_list(t_h *list)
     }
 }
 
-void		list_add(t_h *list, char *addr, char *name)
+void		list_add(t_h *list, char *addr, char *name, t_typeCall type)
 {
     t_list	*e;
 
     e = malloc(sizeof(t_list));
     e->addr = addr;
     e->name = name;
+    e->type = type;
     if (list->size == 0)
     {
 	list->size = 1;
@@ -76,4 +77,22 @@ char		*get_name(t_h *list, char *addr)
 	if (l->addr != NULL && !strncmp(l->addr, addr, strlen(addr)))
 	return l->name;
     return NULL;
+}
+
+t_typeCall	get_type(t_h *list, char *addr)
+{
+    t_list	*l;
+
+    if (list == NULL || addr == NULL || list->size == 0)
+	return SYSCALL_FCT;
+    l = list->head;
+    while (l != list->tail)
+    {
+	if (l->addr != NULL && !strncmp(l->addr, addr, strlen(addr)))
+	    return l->type;
+	l = l->next;
+    }
+	if (l->addr != NULL && !strncmp(l->addr, addr, strlen(addr)))
+	    return l->type;
+	return SYSCALL_FCT;
 }

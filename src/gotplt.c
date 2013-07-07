@@ -34,7 +34,6 @@ void	gotplt_initialize(int fd)
   int	i;
   int	size;
 
-  printf("!!!\n");
   __elf = 0;
   if ((size = lseek(fd, 0, SEEK_END)) == -1)
     return ;
@@ -75,7 +74,7 @@ void		gotplt_add_dynamic_symbol(t_h *symbols, reg64_t rip, int pid)
     asprintf(&straddr, "%x", (unsigned int) rip);
     asprintf(&name, "%s", (char *) __dynstr + ((Elf64_Sym *)((void *) __elf
 	  + __dynsym->sh_offset))[ndx].st_name);
-    list_add(symbols, straddr, name);
+    list_add(symbols, straddr, name, CALL_LINKED);
   }
 }
 

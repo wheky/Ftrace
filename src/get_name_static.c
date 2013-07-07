@@ -19,7 +19,7 @@ int		print_result_64(char *tab, t_file_64 *file, int i,
 
     asprintf(&addr, "%x", (unsigned int)file->symtab[i].st_value);
     asprintf(&name, "%s", &tab[file->symtab[i].st_name]);
-    list_add(list, addr, name);
+    list_add(list, addr, name, CALL_STATIC);
     return (0);
 }
 
