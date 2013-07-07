@@ -11,6 +11,7 @@
 #include "ftrace.h"
 #include "stack.h"
 #include "gotplt.h"
+#include "libpath.h"
 
 pid_t	g_pid;
 
@@ -19,12 +20,14 @@ static int	find_graph(t_h *list)
     struct 	user_regs_struct reg;
     int		status;
     t_head	*stack;
+    char	**libpath;
     long	ret;
     int		fd;
 
     fd = get_fd_file(NULL); /* Remplacer null par le nom du fichier, sinon output.dot sera cree par default */
     output_begin(fd);
     stack = stack_init();
+    libpath = get_shared_libpath(g_pid);
     while (true)
     {
 	ptrace(PTRACE_GETREGS, g_pid, (void *)0, &reg);
