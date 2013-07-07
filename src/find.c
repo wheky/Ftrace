@@ -105,7 +105,11 @@ void		find_call(long ret, int fd, t_head *stack, struct user_regs_struct *reg, p
 	    if (ptrace(PTRACE_PEEKTEXT, pid, reg->rip - (offset - 5), 0) != ~0)
 	    {
 		if (in_plt((reg64_t) (reg->rip - (offset - 5))))
-		  gotplt_add_dynamic_symbol(list, reg->rip - (offset - 5), pid);
+		{
+		  //printf("IN PLT (%x):\n", reg->rsi);
+		  gotplt_add_dynamic_symbol(list, reg->rip,
+		      reg->rip - (offset - 5), reg->rsi, pid);
+		}
 		asprintf(&to, "%llx", reg->rip - (offset - 5));
 		write_and_add(fd, stack, list, to);
 	    }
@@ -115,7 +119,11 @@ void		find_call(long ret, int fd, t_head *stack, struct user_regs_struct *reg, p
 	    if (ptrace(PTRACE_PEEKTEXT, pid, reg->rip + offset + 5, 0) != ~0)
 	    {
 		if (in_plt((reg64_t) (reg->rip + offset + 5)))
-		  gotplt_add_dynamic_symbol(list, reg->rip + offset + 5, pid);
+		{
+		  //printf("IN PLT (%x):\n", reg->rsi);
+		  gotplt_add_dynamic_symbol(list, reg->rip,
+		      reg->rip + offset + 5, reg->rsi, pid);
+		}
 		asprintf(&to, "%llx", reg->rip + offset + 5);
 		write_and_add(fd, stack, list, to);
 	    }
@@ -123,3 +131,13 @@ void		find_call(long ret, int fd, t_head *stack, struct user_regs_struct *reg, p
     }    
 }
 
+void	find_call_ff(long ret, int fd, t_head *stack, struct user_regs_struct *reg, t_h *list)
+{
+  char	*to;
+
+  if ((ret & 0xffff) == 0xd0ff)
+  {
+    asprintf(&to, "%llx", reg->rax);
+    write_and_add(fd, stack, list, to);
+  }
+}

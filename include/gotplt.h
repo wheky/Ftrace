@@ -15,7 +15,7 @@
 typedef unsigned long long	reg64_t;
 
 void	gotplt_initialize(int);
-void	gotplt_add_dynamic_symbol(t_h *, reg64_t, int);
+void	gotplt_add_dynamic_symbol(t_h *, reg64_t, reg64_t, reg64_t, int);
 int	in_plt(reg64_t);
 
 #endif

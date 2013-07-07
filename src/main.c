@@ -11,6 +11,7 @@
 #include "ftrace.h"
 #include "stack.h"
 #include "gotplt.h"
+#include "get_dynamic.h"
 
 pid_t	g_pid;
 
@@ -21,6 +22,8 @@ static int	find_graph(t_h *list)
     t_head	*stack;
     long	ret;
     int		fd;
+    char	*addr;
+    char	*name;
 
     fd = get_fd_file(NULL); /* Remplacer null par le nom du fichier, sinon output.dot sera cree par default */
     output_begin(fd);
@@ -30,8 +33,16 @@ static int	find_graph(t_h *list)
 	ptrace(PTRACE_GETREGS, g_pid, (void *)0, &reg);
 
 	ret = ptrace(PTRACE_PEEKTEXT, g_pid, reg.rip, 0);
+
+	if ((void *) reg.rip == g_symbol_loader_caller)
+	{
+	  asprintf(&addr, "%llx", (unsigned long long) reg.rax);
+	  asprintf(&name, "%s", g_symbol_name);
+	  list_add(list, addr, name);
+	}
 	
 	find_call(ret, fd, stack, &reg, g_pid, list);
+	find_call_ff(ret, fd, stack, &reg, list);
 	find_syscall(ret, fd, stack, &reg, g_pid);
 	find_return(ret, stack, &reg, g_pid);
 

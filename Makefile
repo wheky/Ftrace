@@ -26,7 +26,8 @@ SRC       = main.c		\
 	    list.c		\
 	    get_static.c	\
 	    get_name_static.c	\
-	    gotplt.c
+	    gotplt.c		\
+	    get_dynamic.c
 VPATH	  = ./src
 OBJDIR	  = ./obj
 

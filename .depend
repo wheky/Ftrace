@@ -1,5 +1,5 @@
 main.o: src/main.c include/ftrace.h include/stack.h include/get_static.h \
- include/list.h include/stack.h include/gotplt.h
+ include/list.h include/stack.h include/gotplt.h include/get_dynamic.h
 print.o: src/print.c include/ftrace.h include/stack.h \
  include/get_static.h include/list.h include/errno.h include/syscalls.h \
  include/tab_syscalls.h
@@ -15,4 +15,6 @@ get_static.o: src/get_static.c include/get_static.h include/list.h
 get_name_static.o: src/get_name_static.c include/get_static.h \
  include/list.h
 gotplt.o: src/gotplt.c include/ftrace.h include/stack.h \
- include/get_static.h include/list.h include/gotplt.h
+ include/get_static.h include/list.h include/gotplt.h \
+ include/get_dynamic.h
+get_dynamic.o: src/get_dynamic.c include/get_dynamic.h

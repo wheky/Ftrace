@@ -74,5 +74,6 @@ void	output_add_addr(int fd, _ADDR from, _ADDR to, t_typeCall t);
 void	find_syscall(long ret, int fd, t_head *stack, struct user_regs_struct *reg, pid_t pid);
 void	find_return(long ret, t_head *stack, struct user_regs_struct *reg, pid_t pid);
 void	find_call(long ret, int fd, t_head *stack, struct user_regs_struct *reg, pid_t pid, t_h *list);
+void	find_call_ff(long ret, int fd, t_head *stack, struct user_regs_struct *reg, t_h *list);
 
 #endif /* STRACE_H */
