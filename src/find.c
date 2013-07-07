@@ -11,6 +11,7 @@
 #include "ftrace.h"
 #include "stack.h"
 #include "syscalls.h"
+#include "gotplt.h"
 
 void	find_syscall(long ret, int fd, t_head *stack, struct user_regs_struct *reg, pid_t pid)
 {
@@ -103,6 +104,8 @@ void		find_call(long ret, int fd, t_head *stack, struct user_regs_struct *reg, p
 	    offset = ~offset + 1;
 	    if (ptrace(PTRACE_PEEKTEXT, pid, reg->rip - (offset - 5), 0) != ~0)
 	    {
+		if (in_plt((reg64_t) (reg->rip - (offset - 5))))
+		  gotplt_add_dynamic_symbol(list, reg->rip - (offset - 5), pid);
 		asprintf(&to, "%llx", reg->rip - (offset - 5));
 		write_and_add(fd, stack, list, to);
 	    }
@@ -111,6 +114,8 @@ void		find_call(long ret, int fd, t_head *stack, struct user_regs_struct *reg, p
 	{
 	    if (ptrace(PTRACE_PEEKTEXT, pid, reg->rip + offset + 5, 0) != ~0)
 	    {
+		if (in_plt((reg64_t) (reg->rip + offset + 5)))
+		  gotplt_add_dynamic_symbol(list, reg->rip + offset + 5, pid);
 		asprintf(&to, "%llx", reg->rip + offset + 5);
 		write_and_add(fd, stack, list, to);
 	    }

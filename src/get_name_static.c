@@ -7,7 +7,8 @@
 ** Started on  Wed Mar 13 11:14:00 2013 
 ** Last update Wed Mar 13 11:14:00 2013 
 */
-
+#define _GNU_SOURCE
+#include <stdio.h>
 #include "get_static.h"
 
 int		print_result_64(char *tab, t_file_64 *file, int i,
@@ -33,7 +34,7 @@ t_h		*manage_symtab_64(t_file_64 *file, int i)
 		    + file->shdr[i].sh_offset)) >= file->ptrEnd)
 	 my_error();
     if ((void *)(tab = (char *)((char *)file->elf
-		    + file->shdr[file->shdr[i].sh_link].sh_offset)) >= file->ptrEnd)
+	    + file->shdr[file->shdr[i].sh_link].sh_offset)) >= file->ptrEnd)
 	 my_error();
     if ((len = file->shdr[i].sh_size / sizeof(Elf64_Sym)) < 1)
 	 my_error();
@@ -70,6 +71,16 @@ t_h		*print_sh_name_64(t_file_64 *file)
     {
 	if ((void *)&(file->shdr[i]) + sizeof(Elf64_Shdr) >= file->ptrEnd)
 	     my_error();
+	if (file->shdr[i].sh_type == SHT_RELA)
+	{
+	  unsigned j = 0;
+	  while (j < file->shdr[i].sh_size)
+	  {
+	    Elf64_Rela* p = (void *) file->elf + file->shdr[i].sh_offset + j;
+	    //printf("%p\n", (void *) (p++)->r_offset);
+	    j += sizeof(Elf64_Rela);
+	  }
+	}
 	if (file->shdr[i].sh_type == SHT_SYMTAB)
 	    return (manage_symtab_64(file, i));
 	i++;

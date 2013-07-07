@@ -25,7 +25,8 @@ SRC       = main.c		\
 	    manage_output.c	\
 	    list.c		\
 	    get_static.c	\
-	    get_name_static.c
+	    get_name_static.c	\
+	    gotplt.c
 VPATH	  = ./src
 OBJDIR	  = ./obj
 

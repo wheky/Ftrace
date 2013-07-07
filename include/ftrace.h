@@ -52,7 +52,8 @@ typedef enum	s_typeCall {
     SYSCALL_FCT,
     SYSCALL_NAME,
     CALL_FCT,
-    CALL_NAME
+    CALL_NAME,
+    DYN_FCT
 }		t_typeCall;
 
 extern pid_t	g_pid;

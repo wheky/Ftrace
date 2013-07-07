@@ -7,7 +7,7 @@
 ** Started on  Thu Mar 14 15:48:51 2013 
 ** Last update Thu Mar 14 15:48:51 2013 
 */
-
+#include <stdio.h>
 #include "get_static.h"
 
 void	my_error()
@@ -48,7 +48,12 @@ t_h	*call_my_nm(int fd)
 	    file->elf->e_ident[EI_MAG3] != ELFMAG3)
 	my_error();
     if (file->elf->e_ident[EI_CLASS] == ELFCLASS64)
-	return (manage_64(file));
+    {
+      t_h *list = manage_64(file);
+      printf("UNMAP\n");
+        munmap(data, size);
+	return (list);
+    }
     else if (file->elf->e_ident[EI_CLASS] == ELFCLASS32)
     {
 	printf("Fichier 32b non gere pour le moment\n");

@@ -1,6 +1,18 @@
-main.o: main.c ftrace.h stack.h
-print.o: print.c ftrace.h stack.h errno.h syscalls.h tab_syscalls.h
-sighandler.o: sighandler.c
-stack.o: stack.c stack.h
-find.o: find.c ftrace.h stack.h syscalls.h tab_syscalls.h
-manage_output.o: manage_output.c ftrace.h stack.h
+main.o: src/main.c include/ftrace.h include/stack.h include/get_static.h \
+ include/list.h include/stack.h include/gotplt.h
+print.o: src/print.c include/ftrace.h include/stack.h \
+ include/get_static.h include/list.h include/errno.h include/syscalls.h \
+ include/tab_syscalls.h
+sighandler.o: src/sighandler.c
+stack.o: src/stack.c include/stack.h
+find.o: src/find.c include/ftrace.h include/stack.h include/get_static.h \
+ include/list.h include/stack.h include/syscalls.h include/tab_syscalls.h \
+ include/gotplt.h
+manage_output.o: src/manage_output.c include/ftrace.h include/stack.h \
+ include/get_static.h include/list.h include/gotplt.h
+list.o: src/list.c include/list.h
+get_static.o: src/get_static.c include/get_static.h include/list.h
+get_name_static.o: src/get_name_static.c include/get_static.h \
+ include/list.h
+gotplt.o: src/gotplt.c include/ftrace.h include/stack.h \
+ include/get_static.h include/list.h include/gotplt.h

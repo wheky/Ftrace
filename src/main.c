@@ -10,6 +10,7 @@
 
 #include "ftrace.h"
 #include "stack.h"
+#include "gotplt.h"
 
 pid_t	g_pid;
 
@@ -23,7 +24,6 @@ static int	find_graph(t_h *list)
 
     fd = get_fd_file(NULL); /* Remplacer null par le nom du fichier, sinon output.dot sera cree par default */
     output_begin(fd);
-
     stack = stack_init();
     while (true)
     {
@@ -52,7 +52,7 @@ static int	find_graph(t_h *list)
     return (0);
 }
 
-static int	trace(pid_t pid, t_h *list)
+static int	trace(int fd, pid_t pid, t_h *list)
 {
     int		status;
 
@@ -69,6 +69,11 @@ static int	trace(pid_t pid, t_h *list)
     {
 	fprintf(stderr, "unexpected status\n");
 	return (-1);
+    }
+    if (fd != -1)
+    {
+      printf("INITIALIZED\n");
+      gotplt_initialize(fd);
     }
     return (find_graph(list));
 }
@@ -95,7 +100,8 @@ static int	launch_and_trace(char **argv)
 	fprintf(stderr, "%s: %m\n", argv[0]);
 	exit(-1);
     }
-    return (trace(cpid, list));
+    //gotplt_initialize(fd);
+    return (trace(fd, cpid, list));
 }
 
 int	main(int argc, char *argv[])
@@ -112,7 +118,7 @@ int	main(int argc, char *argv[])
 	    fprintf(stderr, "Usage: %s [-p pid] | PROG [ARGS]\n", argv[0]);
 	    return (-1);
 	}
-	return (trace(atoi(argv[2]), NULL));
+	return (trace(-1, atoi(argv[2]), NULL));
     }
     return (launch_and_trace(argv + 1));
 }
