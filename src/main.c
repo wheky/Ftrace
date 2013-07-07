@@ -23,11 +23,16 @@ static int	find_graph(t_h *list)
     char	**libpath;
     long	ret;
     int		fd;
+    int 	i = 0;
 
     fd = get_fd_file(NULL); /* Remplacer null par le nom du fichier, sinon output.dot sera cree par default */
     output_begin(fd);
     stack = stack_init();
     libpath = get_shared_libpath(g_pid);
+    dprintf(fd, "\"Shared Library \n");
+    while (libpath && libpath[i])
+	dprintf(fd, "%s\n", libpath[i++]);
+    dprintf(fd, "\"[fontsize=17.0, shape=box3d, color=chocolate2];\n");
     while (true)
     {
 	ptrace(PTRACE_GETREGS, g_pid, (void *)0, &reg);
