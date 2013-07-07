@@ -35,7 +35,7 @@ static int	find_graph(t_h *list)
     dprintf(fd, "\"Shared Library \n");
     while (libpath && libpath[i])
 	dprintf(fd, "%s\n", libpath[i++]);
-    dprintf(fd, "\"[fontsize=17.0, shape=box3d, color=chocolate2];\n");
+    dprintf(fd, "\"[fontsize=25.0, shape=box3d, color=chocolate2];\n");
     while (true)
     {
 	ptrace(PTRACE_GETREGS, g_pid, (void *)0, &reg);
